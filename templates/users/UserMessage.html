@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}个人信息{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/semantic.min.css' %}">
+    <style>
+        form.ui.form {
+            width: 400px;
+            margin: 4rem auto;
+        }
+    </style>
+{% endblock %}
+{% block use %}
+    <li><a href="{% url 'users:register' %}" class="btn" role="button">注册</a></li>
+    <li><a href="{% url 'users:login' %}" class="btn" role="button">登录</a></li>
+{% endblock %}
+{% block body_block %}
+<div class="jumbotron"><br/>
+<h2><strong>注册信息</strong></h2><hr/>
+<p><strong>用户名：{{ user.username }}</strong> <a href="">修改</a></p><br/>
+{% if user.email %}
+    <p><strong>邮件地址：</strong>{{ user.email }}
+    {% if user.is_active %}
+            <strong>(已验证)</strong>
+        {% else %}
+            <strong>(未激活)</strong>
+            <a href="{% url 'users:ActiveEmail' %}">激活邮箱</a>
+        {% endif %}
+        <a href="{% url 'users:AddEmail' %}">修改邮箱</a>
+    {% else %}
+        <a href="{% url 'users:AddEmail' %} " class="btn btn-primary btn-sm">添加邮箱</a><hr/>
+    {% endif %}
+    </p>
+<hr/><a href="{% url 'users:index' %}" class="btn btn-primary">返回界面</a>
+</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}问题添加{% endblock %}
+{% block use %}
+    <li><a href="{% url 'users:register' %}" >注册</a></li>
+    <li><a href="{% url 'users:ForPass' %}" >忘记密码</a></li>
+{% endblock %}
+{% block css %}
+    <style>
+        form.ui.form {
+            width: 400px;
+            margin: 4rem auto;
+        }
+    </style>
+{% endblock %}
+{% block body_block %}
+<div class="jumbotron">
+<div class="container">
+    <form action="{% url 'choices:QuAdd' questionnaire.id choice %}" class="ui form" method="post">
+        {% csrf_token %}
+        {% if choice == 'A' %}
+            <div class="field">
+            <label for="question">请输入问题题目</label>
+            <input id="question" type="text" name="question" required>
+            </div>
+        {% else %}
+            <div class="field">
+            <label for="question">请输入问题题目</label>
+            <input id="question" type="text" name="question" required>
+            </div>
+            <div class="field">
+            <label for="content">请输入选项内容</label>
+            <input id="content" type="text" name="content" required>
+            </div>
+        {% endif %}
+        <input class="ui green fluid button" type="submit" value="添加问题"/>
+        <a href="{% url 'choices:QuNaEdit' questionnaire.id %}" class="btn btn-primary btn-sm">返回界面</a>
+    </form>
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% block title %}首页{% endblock %}
+{% block css %}
+    <style>
+        #blog{display: none;}
+        #myform{display: none;}
+    </style>
+{% endblock %}
+{% block use %}
+    <li><a class="btn" onclick="myquit()">注销</a></li>
+    <li><a class="btn" onclick="document.getElementById('blog').style.display='block';document.getElementById('first').style.display='none'">登录</a></li>
+{#    <li><a class="btn" id="mybutton">登录</a></li>#}
+{% endblock %}
+{% block body_block %}
+    <div class="jumbotron">
+        <div class="container" id="blog">
+            <form action="" method="post">
+                {% csrf_token %}
+                <h3>请登录</h3>
+                <div class="form-group">
+                    <label for="username">用户名*</label><span id="user" class="error"></span>
+                    <input type="text" class="form-control" name="username" id="username" placeholder="用户名" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">密码*</label><span id="pass" class="error"></span>
+                    <input type="password" class="form-control" name="password" id="password" placeholder="密码" required>
+                </div>
+                <div class="text-center"><a class="btn btn-primary" id="mybutton">登录</a></div>
+            </form>
+        </div>
+        <div class="container">
+            <ul id="questionaire_list" class="list-unstyled list-group"></ul>
+            <div class="text-center" id="myadd">
+                <form class="ui form" method="post" id="myform">
+                    {% csrf_token %}
+                     <input id="title" type="text" name="title" placeholder="请输入问卷名称" required>
+                     <input class="btn btn-primary btn-xs" type="text" id="mybutton" value="添加问卷"/>
+                </form>
+            </div>
+        </div>
+    </div>
+      <div class="container" id="first">
+        <h1>欢迎访问</h1>
+        <p>这是用dango做的一个简单问卷调查网站，如果想了解Django，请点击了解更多，否则请点击右上角的登录按钮，如果没有账号，请点击注册按钮</p>
+        <p><a class="btn btn-primary btn-lg" href="https://docs.djangoproject.com/en/1.11/" role="button">了解更多 &raquo;</a></p>
+      </div>
+<script>
+    var getdata = function(){
+        $('#blog').style('display','block');
+        $.ajax({
+            type:"GET",
+            url:"{% url 'qunalist' %}",
+            headers:Cookies.get('token')?{'Authorization': 'Token ' + Cookies.get('token')}:{},
+            dataType:'json',
+            success:function(data){
+                for(var i=0;i<data.length;i++){
+                    var $add = $('<li class="list-group-item" >'+
+                        '<span class="btn btn-warning btn-xs" onclick="click_button">删除问卷</span>'+
+                        '<strong>'+data[i].title+'</strong></li>');
+                    $('#questionaire_list').append($add);
+                }
+            },
+            error:function (xhr){
+                console.log(xhr.status + ": " + xhr.responseText);
+            }
+        })
+    };
+    $(function(){
+        getdata();
+        $('#mybutton').on('click',function () {
+{#            var name=$('#username').val();#}
+{#            var password=$('#password').val();#}
+{#            alert(name);#}
+{#            alert(password);#}
+            $.ajax({
+                url:'http://127.0.0.1:8000/api/token-auth',
+                type:'json',
+                method:'post',
+                data:{
+                    username:$('#username').val(),
+                    password:$('#password').val()
+                },
+                success:function (data) {
+                    Cookies.set('token',data.token);
+                    getdata();
+                }
+            })
+        });
+    });
+    function myquit(){
+        Cookies.remove('token');
+        getdata();
+        $('#questionaire_list li').remove();
+    }
+</script>
+{#<script>#}
+{#    function myquit(){#}
+{#        Cookies.remove('token');#}
+{#        getdata();#}
+{#    }#}
+{#</script>#}
+{% endblock %}

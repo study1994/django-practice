@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}添加选项{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/semantic.min.css' %}">
+    <style>
+        form.ui.form {
+            width: 400px;
+            margin: 4rem auto;
+        }
+    </style>
+{% endblock %}
+{% block use %}
+    <li><a href="{% url 'users:register' %}" >注册</a></li>
+    <li><a href="{% url 'users:ForPass' %}" >忘记密码</a></li>
+{% endblock %}
+{% block body_block %}
+<div class="jumbotron">
+<div class="container">
+    <form action="{% url 'choices:ChoiceAdd' questionnaire.id myquestion.id %}" class="ui form" method="post">
+        {% csrf_token %}
+        <div class="field">
+            <label for="title">要添加的选项内容:</label>
+            <input id="title" type="text" name="title" required>
+        </div>
+        <input class="ui green fluid button" type="submit" value="添加问题选项"/>
+        <br/><a href="{% url 'choices:QuNaEdit' questionnaire.id %}" class="ui green fluid button">返回问卷编辑页面</a>
+    </form>
+</div>
+</div>
+{% endblock %}

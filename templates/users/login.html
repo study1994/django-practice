@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}登录{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/semantic.min.css' %}">
+    <style>
+        form.ui.form {
+            width: 400px;
+            margin: 4rem auto;
+        }
+    </style>
+{% endblock %}
+{% block use %}
+    <li><a href="{% url 'users:register' %}" >注册</a></li>
+    <li><a href="{% url 'users:ForPass' %}" >忘记密码</a></li>
+{% endblock %}
+{% block body_block %}
+<div class="jumbotron">
+    <form action="{% url 'users:login' %}" class="ui form" method="post">
+        {% csrf_token %}
+        <div class="field">
+            <label for="username">用户名</label>
+            <input id="username" type="text" name="username" required>
+        </div>
+        <div class="field">
+            <label for="password">密码</label>
+            <input id="password" type="password" name="password" required>
+        </div>
+        <input class="ui green fluid button" type="submit" value="登录"/><br/>
+        <div class="field">
+        {% if error %}错误信息：{{ error }}{% endif %}
+        </div>
+    </form>
+</div>
+{% endblock %}

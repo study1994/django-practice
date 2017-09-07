@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}发送成功{% endblock %}
+{% block use %}
+    <li><a href="{% url 'users:register' %}" >注册</a></li>
+    <li><a href="{% url 'users:ForPass' %}" >忘记密码</a></li>
+{% endblock %}
+{% block body_block %}
+<div class="jumbotron">
+<div class="container">
+<h2><strong>请登录邮箱点击激活链接</strong></h2><br/>
+{% if users.is_authenticated %}
+    <a href="{% url 'users:UsMessage' %}" class="btn btn-primary btn-lg">返回个人信息中心</a>
+{% else %}
+    <a href="{% url 'users:register' %}" class="btn btn-primary btn-lg">返回个登录页面</a>
+{% endif %}
+</div>
+</div>
+{% endblock %}

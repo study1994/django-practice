@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}注册{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/semantic.min.css' %}">
+    <style>
+        form.ui.form {
+            width: 400px;
+            margin: 4rem auto;
+        }
+    </style>
+{% endblock %}
+{% block use %}
+    <li><a href="{% url 'users:login' %}" >已有账户，进行登录</a></li>
+{% endblock %}
+{% block body_block %}
+<div class="jumbotron">
+    <form action="{% url 'users:register' %}" class="ui form" method="post">
+        {% csrf_token %}
+        <div class="field">
+            <label for="username">用户名</label>
+            <input id="username" type="text" name="username" required>
+            {% if errors.username %}错误信息：{{ errors.username }}{% endif %}
+        </div>
+        <div class="field ">
+            <label for="password">密码</label>
+            <input id="password" type="password" name="password1" required>
+        </div>
+        <div class="field">
+            <label for="password">确认密码</label>
+            <input id="password" type="password" name="password2" required>
+            {% if errors.password %}错误信息：{{ errors.password }}{% endif %}
+        </div>
+        <input class="ui green fluid button" type="submit" value="注册"/>
+        <div class="field">
+        {% if form.errors %}错误信息：{{ form.errors }}{% endif %}
+        </div>
+    </form>
+</div>
+
+{% endblock %}

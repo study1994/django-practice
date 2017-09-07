@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}错误{% endblock %}
+{% block use %}
+    <li><a href="{% url 'users:register' %}" >注册</a></li>
+    <li><a href="{% url 'users:ForPass' %}" >忘记密码</a></li>
+{% endblock %}
+{% block body_block %}
+<div class="jumbotron">
+<div class="container">
+    <h1>链接失效</h1>
+    <strong><a href="{% url 'users:login' %}" class="btn btn-primary btn-lg">返回登录页面</a></strong>
+</div>
+</div>
+{% endblock %}

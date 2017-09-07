@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}添加邮箱{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.6/semantic.min.css">
+    <style>
+        form.ui.form {
+            width: 400px;
+            margin: 4rem auto;
+        }
+    </style>
+{% endblock %}
+{% block use %}
+    <li><a href="{% url 'users:register' %}" >注册</a></li>
+    <li><a href="{% url 'users:ForPass' %}" >忘记密码</a></li>
+{% endblock %}
+{% block body_block %}
+<div class="jumbotron">
+<div class="container">
+    <form action="{% url 'users:AddEmail' %}" class="ui form" method="post">
+        {% csrf_token %}
+        <div class="field">
+            <label for="title">要添加的邮箱</label>
+            <input id="title" type="text" name="title" required>
+        </div>
+        <input class="ui green fluid button" type="submit" value="添加{{ name }}"/>
+        <div class="field">
+        <br/><a href="{% url 'users:UsMessage' %}" class="ui green fluid button">返回界面</a>
+        {% if error %}错误信息：{{ error }}{% endif %}
+        </div>
+    </form>
+</div>
+</div>
+{% endblock %}

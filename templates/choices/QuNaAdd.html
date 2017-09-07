@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}添加问卷{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/semantic.min.css' %}">
+    <style>
+        form.ui.form {
+            width: 400px;
+            margin: 4rem auto;
+        }
+    </style>
+{% endblock %}
+{% block use %}
+    <li><a href="{% url 'users:register' %}" >注册</a></li>
+    <li><a href="{% url 'users:ForPass' %}" >忘记密码</a></li>
+{% endblock %}
+{% block body_block %}
+<div class="jumbotron">
+<div class="container">
+    <form action="{% url 'choices:QuNaAdd' %}" class="ui form" method="post">
+        {% csrf_token %}
+        <div class="field">
+            <label for="title">要添加的问卷调查名称</label>
+            <input id="title" type="text" name="title" required>
+        </div>
+        <input class="ui green fluid button" type="submit" value="添加{{ name }}"/>
+        <div class="field">
+        {% if error %}错误信息：{{ error }}{% endif %}
+        <br/><a href="{% url 'index' %}" class="ui green fluid button">返回界面</a>
+        </div>
+    </form>
+</div>
+</div>
+{% endblock %}

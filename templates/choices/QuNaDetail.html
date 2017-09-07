@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}查看问卷{% endblock %}
+{% block css %}
+
+{% endblock %}
+{% block use %}
+    <li><a href="{% url 'users:login' %}" >已有账户，进行登录</a></li>
+{% endblock %}
+{% block body_block %}
+<div class="container">
+    <h2 class="text-center">{{ questionnaire.title }} </h2>
+    <p><dl><dt>亲爱的朋友，您好:</dt><dd>感谢您阅读并帮助我们回答这个问卷。
+    问卷的全部内容当且仅当用于科学研究，决不用于任何商业目的。
+    请在选项上打勾，或填写相应信息。再谢！</dd></dl></p>
+    <ol>{% for myquestion in myquestion %}
+    <div class="row">
+        <div class="col-xs-12 col-md-12">
+            <hr/><p><li>{{ myquestion.name }}</li></p>
+        </div>
+        {% for choice in myquestion.mychoice_set.all %}
+        <div class="col-xs-3 col-md-3">
+            {% if myquestion.type == '1' %}
+                <input type="radio" name="{{ myquestion.id }}" id="choice.id{{ forloop.counter }}" value="{{ choice.id }}"/>
+                <label for="choice.id{{ forloop.counter }}"> {{ choice.name }}</label>
+            {% else %}
+                <input name="{{ choice.id }}" type="checkbox" id="like" value="{{ choice.id }}"><strong> {{ choice.name }}</strong>
+            {% endif %}
+        </div>
+        {% endfor %}
+        {% for answer in myquestion.mytext_set.all %}
+            <div class="col-xs-3 col-md-3">
+                <input type="text" name={{ myquestion.id }}{{ answer.id }} value="" size="100">
+            </div>
+        {% endfor %}
+     </div>
+    {% endfor %}</ol>
+    <div class="text-center"><button class="btn-primary btn-lg" onclick="click_button()">提交</button></div>
+</div>
+    <script>
+        function click_button(){
+            alert('此问卷仅供浏览')
+        }
+    </script>
+{% endblock %}

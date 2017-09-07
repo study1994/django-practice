@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}问卷编辑{% endblock %}
+{% block use %}
+    <li><a href="{% url 'users:login' %}" >已有账户，进行登录</a></li>
+{% endblock %}
+{% block body_block %}
+<script src="{% static 'js/echarts.min.js' %}"></script>
+<div class="container">
+<div class="jumbotron">
+    <h2 class="text-center">{{ questionnaire.title }}调查结果</h2>
+    <div class="text-center"><button class="btn btn-lg" onclick="click_button()">填写问卷总人数:{{ questionnaire.num }}</button></div>
+    <div class="row">
+        <div class="col-xs-6 col-md-6" id="result" style="width: 800px;height:300px;"></div>
+    </div>
+    <ol>
+    {% for myquestion in myquestion %}
+            <li>
+            {{ myquestion.name }}
+            {% if myquestion.type != '3' %}
+                <div class="row">
+                    <div class="col-xs-6 col-md-6" id="{{ myquestion.id|add:"0" }}" style="width: 400px;height:300px;"></div>
+                    <div class="col-xs-6 col-md-6" id="{{ myquestion.id|add:"100" }}" style="width: 400px;height:300px;"></div>
+                </div>
+{#            <div id="{{ myquestion.id|add:"0" }}" style="width: 400px;height:300px; background-color: black" float:left></div>#}
+{#            <div id="{{ myquestion.id|add:"1111" }}" style="width: 400px;height:300px; background-color:red" float:left></div>#}
+            <script type="text/javascript">
+                var myChart = echarts.init(document.getElementById("{{ myquestion.id|add:"0" }}"));
+                var option = {
+                    tooltip : {
+                        trigger: 'item',
+                        formatter: "{a} <br/>{b} : {c} ({d}%)"
+                    },
+                    series : [
+                        {
+                            name: '访问来源',
+                            type: 'pie',
+                            radius : '50%',
+                            center: ['40%', '40%'],
+                            data:[
+                                {% for choice in myquestion.mychoice_set.all %}
+                                    {value:{{ choice.num }}, name:'{{ choice.name }}:{{ choice.num }}'},
+                                {% endfor %}
+                            ],
+                    itemStyle: {
+                        emphasis: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+                ]
+            };
+             myChart.setOption(option);
+             var myChart1 = echarts.init(document.getElementById("{{ myquestion.id|add:"100" }}"));
+                var option1 = {
+                    title: {
+                        text: ' '
+                    },
+                    tooltip: {},
+                    legend: {
+                        data:['']
+                    },
+                    xAxis: {
+{#                        data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋"]#}
+                        data:[
+                                {% for choice in myquestion.mychoice_set.all %}
+                                    '{{ choice.name }}',
+                                {% endfor %}
+                            ],
+                    },
+                    yAxis: {},
+                    series: [{
+                        name: '销量',
+                        type: 'bar',
+{#                        data: [5, 20, 36, 10, 10, 20]#}
+                        data:[
+                                {% for choice in myquestion.mychoice_set.all %}
+                                    {{ choice.num }},
+                                {% endfor %}
+                            ],
+                    }]
+                };
+             myChart1.setOption(option1);
+                var myChart2 = echarts.init(document.getElementById("result"));
+                var option2 = {
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    xAxis:  {
+                        type: 'category',
+                        boundaryGap: false,
+                        data:[
+                            {% for list in Timelist0 %}'{{ list }}',{% endfor %}
+                        ]
+                    },
+                    yAxis: {
+                        type: 'value',
+                        axisLabel: {
+                            formatter: '{value}'
+                        }
+                    },
+                    series: [
+                    {
+                        name:'今日填写人数',
+                        type:'line',
+                        data:[
+                            {% for list in Timelist1 %}'{{ list }}',{% endfor %}
+                        ]
+{#                        markPoint: {#}
+{#                            data: [#}
+{#                                {type: 'max', name: '最大值'},#}
+{#                                {type: 'min', name: '最小值'}#}
+{#                            ]#}
+{#                        }#}
+                    }
+                ]
+            };
+             myChart2.setOption(option2);
+
+            </script>
+            {% else %}
+            {% for answer in myquestion.mytext_set.all %}
+                <ul>
+                {% for content in answer.content_set.all %}
+                    <li>{{ content.name }}</li>
+                {% endfor %}
+                </ul>
+            {% endfor %}
+            <br/>
+            {% endif %}
+            </li>
+    {% endfor %}
+     </ol>
+</div>
+</div>
+{% endblock %}

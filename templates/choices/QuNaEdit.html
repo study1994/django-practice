@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}问卷编辑{% endblock %}
+{% block use %}
+    <li><a href="{% url 'users:login' %}" >已有账户，进行登录</a></li>
+{% endblock %}
+{% block body_block %}
+<div class="container">
+<div class="jumbotron">
+    <form action="{% url 'choices:QuNaEdit' questionnaire.id %}" method="post">
+        {% csrf_token %}
+        <h2 class="text-center">{{ questionnaire.title }}</h2><br/>
+        <ol>
+        {% for myquestion in myquestion %}
+                <li class="list-group-item"><div id="{{ myquestion.id }}">
+                <p>{{ myquestion.name }}<span class="badge left"><a class="btn btn-danger btn-xs" href="{% url 'choices:QuDelect' questionnaire.id myquestion.id %}">删除问题</a>
+{#                    <a class="btn btn-warning btn-xs" href="{% url 'choices:QuMove' myquestion.id 1 %}">向下移动</a>#}
+                    <a class="btn btn-warning btn-xs" onclick="my_function({{ myquestion.id }},1)">↓</a>
+                    <a class="btn btn-warning btn-xs" onclick="my_function({{ myquestion.id }},2)">↑</a></span>
+                {% if myquestion.type != '3' %}
+                    <a class="btn btn-primary btn-xs" href="{% url 'choices:ChoiceAdd' questionnaire.id myquestion.id %}">添加选项</a>
+{#                    <input id="title" type="text" name="" placeholder="请输入选项名称">#}
+{#                    <button class="btn btn-primary btn-md" id="addbutton" value="添加选项">添加选项</button>#}
+                {% endif %}
+                </p>
+                <p>
+                {% for answer in myquestion.mychoice_set.all %}
+                    {% if myquestion.type == '1' %}
+                        <input name="choice" type="radio" class="noborder" value=""> <a class="btn btn-primary btn-xs" href="{% url 'choices:ChoiceDelect' questionnaire.id answer.id %}">删除选项</a> {{ answer.name }}<br/>
+                    {% else %}
+                        <input name="choice" type="checkbox" id="like" value=""> <a class="btn btn-primary btn-xs" href="{% url 'choices:ChoiceDelect' questionnaire.id answer.id %}">删除选项</a> {{ answer.name }}<br/>
+                    {% endif %}
+                {% endfor %}
+                {% for answer in myquestion.mytext_set.all %}
+                    <input type="text" name="mytext" value="{{ answer.name }}" size="100">
+                {% endfor %}
+                </p><br/></div></li>
+        {% endfor %}
+         </ol>
+        <div class="container text-center">
+            <select name="select">
+            {% for choice in choices %}
+                    <option>{{ choice }}</option>
+            {% endfor %}
+            </select>
+            <input name="Submit" type="submit" class="btn_grey" value="添加问题"><br/>
+        </div>
+    </form>
+</div>
+</div>
+<script>
+    function my_function(a,b) {
+        var $this = $('#'+a+'');
+        if((b==1&&$this.parent().next().length==0)||(b==2&&$this.parent().prev().length==0)){
+            alert('到头了，不能移动')
+        }else {
+            $(function(){
+                $.get('/choices/questionn_move/'+a+'/'+b+'/',function (data) {
+                    if(data.Type=='1'){
+                        $this.parent().insertAfter($this.parent().next());
+                    }else if(data.Type=='2'){
+                        $this.parent().insertBefore($this.parent().prev());
+                    }
+                });
+            });
+        }
+    }
+</script>
+{% endblock %}

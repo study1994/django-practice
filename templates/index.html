@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}首页{% endblock %}
+{% block use %}
+    <li><a href="{% url 'users:register' %}" class="btn" role="button">注册</a></li>
+    <li><a href="{% url 'users:login' %}" class="btn" role="button">登录</a></li>
+{% endblock %}
+{% block body_block %}
+    {% if user.is_authenticated %}
+        <div class="jumbotron">
+            <div class="container">
+                <ul id="questionaire_list" class="list-unstyled list-group">
+                {% for questionnaire in user.questionnaire_set.all %}
+                    <li class="list-group-item" id="{{ questionnaire.id }}"><span class="badge">答卷人数：{{ questionnaire.num }}</span><strong><a href="{% url 'choices:QuNaDetail' questionnaire.id %}">{{ questionnaire.title }}</a></strong><br/>
+                        <a href="{% url 'choices:QuNaRelease' questionnaire.id %}" class="btn btn-warning btn-xs">发布问卷</a>
+                        <a href="{% url 'choices:QuNaEdit' questionnaire.id %}" class="btn btn-warning btn-xs">编辑问卷</a>
+                        <a class="btn btn-warning btn-xs" onclick="click_button({{ questionnaire.id }})">删除问卷</a>
+                        <a href="{% url 'choices:QuNaResult' questionnaire.id %}" class="btn btn-warning btn-xs">统计结果</a></li>
+                {% endfor %}
+                </ul>
+                <div class="text-center">
+                    <form class="ui form" method="post" id="myform">
+                        {% csrf_token %}
+                         <input id="title" type="text" name="title" placeholder="请输入问卷名称" required>
+                         <input class="btn btn-primary btn-xs" type="text" id="mybutton" value="添加问卷"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% else %}
+    <div class="jumbotron">
+      <div class="container">
+        <h1>欢迎访问</h1>
+        <p>这是用dango做的一个简单问卷调查网站，如果想了解Django，请点击了解更多，否则请点击右上角的登录按钮，如果没有账号，请点击注册按钮</p>
+        <p><a class="btn btn-primary btn-lg" href="https://docs.djangoproject.com/en/1.11/" role="button">了解更多 &raquo;</a></p>
+      </div>
+    </div>
+    {% endif %}
+<script>
+    $(function(){
+        $('#mybutton').on('click',function(){
+            $.ajax({
+                cache:false,
+                type:"POST",
+                dataType:"json",
+                url:"{% url 'choices:QuNaAdd1'%}",
+                data:$('#myform').serialize(),
+                async:true,
+                success:function(data){
+                    if(data.status == 'fail'){
+                        if(data.msg == '问卷调查名重复'){
+                            alert("问卷调查名重复");
+                        }
+                        else if(data.msg == '添加失败'){
+                            alert("添加失败");
+                        }
+                    }else if(data.status=='success'){
+{#                        window.location.href="{% url 'users:index'%}"#}
+                        var $add = $('<li class="list-group-item" id="'+data.QuNaId+'"><span class="badge">答卷人数：'+
+                            data.QuNaNd+'</span><strong><a href="/choices/quna_detail/'+data.QuNaId+'/">'+data.QuNaTitle+'</a></strong><br/></li>');
+                        $('#questionaire_list').append($add);
+                        var $add1 = $('<a href="/choices/quna_release/'+data.QuNaId+'/" class="btn btn-warning btn-xs">发布问卷</a>&nbsp;' +
+                            '<a href="/choices/quna_edit/'+data.QuNaId+'/" class="btn btn-warning btn-xs">编辑问卷</a>&nbsp;' +
+                            '<a class="btn btn-warning btn-xs" onclick="click_button('+data.QuNaId+')">删除问卷</a>&nbsp;' +
+                            '<a href="/choices/quna_result/'+data.QuNaId+'/" class="btn btn-warning btn-xs">统计结果</a>&nbsp;');
+                        $('#questionaire_list li:last').append($add1);
+                    }
+                },
+{#                href="/choices/quna_delect/'+data.QuNaId+'/" #}
+                error:function (error) {
+                    console.log('error')
+                }
+            });
+        });
+    });
+</script>
+<script>
+function click_button(num){
+    $(function () {
+        $.get('/choices/quna_delect/'+num+'/',function(data){
+        $('#'+data.QuNaId+'').remove()
+    })
+    });
+}
+</script>
+{% endblock %}
